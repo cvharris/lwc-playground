@@ -1,0 +1,32 @@
+{
+    "private": true,
+    "name": "@lwc/playground",
+    "version": "2.35.0",
+    "type": "module",
+    "description": "Playground project to experiment with LWC.",
+    "scripts": {
+        "dev": "rollup -c --watch",
+        "build": "NODE_ENV=production rollup -c"
+    },
+    "dependencies": {
+        "@salesforce-ux/wes-text-input": "^0.1.1"
+    },
+    "devDependencies": {
+        "@lwc/rollup-plugin": "2.35.0",
+        "@rollup/plugin-node-resolve": "^9.0.0",
+        "@rollup/plugin-replace": "^5.0.2",
+        "lwc": "2.35.0",
+        "rollup": "^3.7.5",
+        "rollup-plugin-livereload": "^2.0.5",
+        "rollup-plugin-serve": "^2.0.2"
+    },
+    "nx": {
+        "targets": {
+            "build": {
+                "outputs": [
+                    "./dist"
+                ]
+            }
+        }
+    }
+}
