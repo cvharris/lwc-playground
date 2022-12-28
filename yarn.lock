@@ -497,7 +497,7 @@
   dependencies:
     "@salesforce-ux/sds-icon" "^0.2.0"
 
-"@salesforce-ux/wes-styling-hooks@^0.1.1":
+"@salesforce-ux/wes-styling-hooks@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@salesforce-ux/wes-styling-hooks/-/wes-styling-hooks-0.0.1.tgz#ff53d733abfb17e327948c22a5198fa37e4de9a9"
   integrity sha512-qWyzIdrqVxhM6jRhwenWLylaJUn5DcIg0IcXG76yI9M0fq7aWgh+AtlvZ/Diq0uYKfG6/PkcOTIXvpN4uBGOyw==

@@ -9,7 +9,7 @@
         "build": "NODE_ENV=production rollup -c"
     },
     "dependencies": {
-        "@salesforce-ux/wes-styling-hooks": "^0.1.1",
+        "@salesforce-ux/wes-styling-hooks": "^0.0.1",
         "@salesforce-ux/wes-text-input": "^0.1.1"
     },
     "devDependencies": {
