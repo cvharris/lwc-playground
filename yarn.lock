@@ -475,6 +475,16 @@
     elix "^15.0.0"
     nanoid "^3.1.25"
 
+"@salesforce-ux/sds-styling-aliases@^0.2.3":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@salesforce-ux/sds-styling-aliases/-/sds-styling-aliases-0.2.4.tgz#0e5fe49ae196cdf7c9984937692bee62fb0e35c4"
+  integrity sha512-cILPBoRBptRNUb0kT5MWzrZqE+8W9zQAWt4YGqJ17ttDSU4blDfAw2hxnvHURFmxCoKWBX/BMCMeL9/AUf9wsw==
+
+"@salesforce-ux/sds-styling-hooks@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@salesforce-ux/sds-styling-hooks/-/sds-styling-hooks-0.7.0.tgz#ae8014a707d5d082352f9d1d919add9a9c6e2abd"
+  integrity sha512-VXz1/aKAFCLngUdf5IU9BybNWkfNJBS+yR5KFbwMAjGk1MZ+rghfnEHqbddE7E2KSOKGbszNBMW8/FUCTeRjIQ==
+
 "@salesforce-ux/sds-utils@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@salesforce-ux/sds-utils/-/sds-utils-0.1.1.tgz#8a8bc30a06d3bd3e17d29f9464b3f2175b97171f"
@@ -486,6 +496,14 @@
   integrity sha512-wQ8Y9Z/Lwl6wdv/XsMr6wBYShuovzHgeH0fT6Cyi6uOhXfny21TiJxQ9DRBFH41RcTO65a06dowFXosNxsEDBA==
   dependencies:
     "@salesforce-ux/sds-icon" "^0.2.0"
+
+"@salesforce-ux/wes-styling-hooks@^0.1.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@salesforce-ux/wes-styling-hooks/-/wes-styling-hooks-0.0.1.tgz#ff53d733abfb17e327948c22a5198fa37e4de9a9"
+  integrity sha512-qWyzIdrqVxhM6jRhwenWLylaJUn5DcIg0IcXG76yI9M0fq7aWgh+AtlvZ/Diq0uYKfG6/PkcOTIXvpN4uBGOyw==
+  dependencies:
+    "@salesforce-ux/sds-styling-aliases" "^0.2.3"
+    "@salesforce-ux/sds-styling-hooks" "0.7.0"
 
 "@salesforce-ux/wes-text-input@^0.1.1":
   version "0.1.1"

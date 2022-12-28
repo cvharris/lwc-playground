@@ -1,6 +1,6 @@
 import { LightningElement, api } from 'lwc';
 import element from '../../../../element'
-import WESTextInput from '../../../../node_modules/@salesforce-ux/wes-text-input/text-input'
+import WESTextInput from '@salesforce-ux/wes-text-input/dist/text-input'
 
 export default class App extends LightningElement {
 
