@@ -1,5 +1,17 @@
 {
   "compilerOptions": {
-      "experimentalDecorators": true
-  }
+    "baseUrl": "./src",
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2017",
+    "paths": {
+      "x/app": [
+        "./modules/x/app/app"
+      ]
+    }
+  },
 }

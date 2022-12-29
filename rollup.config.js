@@ -1,37 +1,51 @@
-import lwc from '@lwc/rollup-plugin';
-import replace from '@rollup/plugin-replace';
-import serve from 'rollup-plugin-serve';
-import livereload from 'rollup-plugin-livereload';
-import resolve from '@rollup/plugin-node-resolve';
+const path = require('path');
+const lwc = require('@lwc/rollup-plugin');
+const replace = require('@rollup/plugin-replace');
+const serve = require('rollup-plugin-serve');
+const livereload = require('rollup-plugin-livereload');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const commonJs = require('@rollup/plugin-commonjs');
+const babel = require('@rollup/plugin-babel');
+const { transform } = require('@babel/core');
+const json = require('@rollup/plugin-json');
 
 const __ENV__ = process.env.NODE_ENV ?? 'development';
 
-export default (args) => {
-    return {
-        input: 'src/main.js',
+module.exports = (args) => {
+  return {
+    input: 'src/main.js',
 
-        output: {
-            file: 'dist/main.js',
-            format: 'esm',
-        },
+    output: {
+      file: 'dist/main.js',
+      format: 'esm',
+    },
 
-        plugins: [
-            resolve({
-                moduleDirectory: ['node_modules', 'src'],
-                extensions: ['.js', '.ts'],
-                browser: true,
-            }),
-            replace({
-                'process.env.NODE_ENV': JSON.stringify(__ENV__),
-                preventAssignment: true,
-            }),
-            lwc(),
-            args.watch &&
-                serve({
-                    open: false,
-                    port: 3000,
-                }),
-            args.watch && livereload(),
-        ],
-    };
+    plugins: [
+      nodeResolve({
+        browser: true,
+      }),
+      lwc({
+        exclude: ['node_modules/**'],
+      }),
+      commonJs(),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(__ENV__),
+        preventAssignment: true,
+      }),
+
+      // After LWC has been transformed, transform any syntax isn't supported
+      // by all browsers that support modules
+      // babel({
+      //   babelrc: false,
+      //   presets: ['@babel/preset-modules'],
+      //   extensions: ['.ts', '.js'],
+      // }),
+      args.watch &&
+        serve({
+          open: false,
+          port: 3000,
+        }),
+      args.watch && livereload(),
+    ],
+  };
 };

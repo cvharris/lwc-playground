@@ -1,0 +1,95 @@
+<template>
+  <section class="centered-container">
+    <template if:false={isNotLoggedIn}>
+      <div
+        id="dynamic-signin-form"
+        if:false={isEnteringOTPCode}
+        class="panel pure-form pure-form-aligned"
+      >
+        <div part="input-text">
+          <label part="label" for="email">Email</label>
+          <div part="input-container">
+            <input
+              part="input"
+              name="email"
+              type="email"
+              autocomplete="username"
+              value={username}
+              onkeyup={usernameHandler}
+            />
+          </div>
+        </div>
+        <div class="pure-controls">
+          <button
+            class="link-signin pure-button pure-button-primary"
+            data-se="submit"
+            part="button"
+            type="submit"
+            onclick={submitDynamicSigninForm}
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+      <div
+        id="otp-code-form"
+        if:true={isEnteringOTPCode}
+        class="panel pure-form pure-form-aligned"
+      >
+        <div class="pure-control-group">
+          <label for="otp-code">Enter OTP:</label>
+          <input
+            id="otp-code"
+            name="otp-code"
+            value={password}
+            onkeyup={passwordHandler}
+          />
+        </div>
+        <div class="pure-controls">
+          <button
+            id="submit-otp-code-form"
+            onclick={submitOTPCode}
+            class="pure-button pure-button-primary"
+          >
+            Submit
+          </button>
+        </div>
+        <div><button onclick={showSigninForm}>Back to sign-in</button></div>
+      </div>
+      <div if:true={errorMessage}>{errorMessage}</div>
+    </template>
+    <!-- authenticated -->
+    <div id="auth" if:true={isAuthenticated} class="panel">
+      <div class="header">Welcome back</div>
+      <div class="pure-menu">
+        <button id="logout-redirect" class="pure-menu-link" onclick={logout}>
+          Logout
+        </button>
+        <button id="renew-token" class="pure-menu-link" onclick={renewToken}>
+          Renew Access Token
+        </button>
+        -->
+        <!-- tests for a valid Okta SSO session -->
+        <button
+          id="profile-button"
+          class="pure-menu-link"
+          onclick={getUserInfo}
+        >
+          Get user info
+        </button>
+      </div>
+      <div class="panel">
+        <div class="header">User Info</div>
+        <div id="userInfo">{userInfo}</div>
+      </div>
+      <div class="panel">
+        <div class="header">Access Token</div>
+        <div class="scroll-container">
+          <div id="accessToken">{accessToken}</div>
+        </div>
+      </div>
+    </div>
+    <!-- loading -->
+    <div id="loading" if:true={isLoading}>Loading...</div>
+  </section>
+</template>
