@@ -1,5 +1,14 @@
 import { LightningElement } from 'lwc';
-import { OktaAuth } from '@okta/okta-auth-js';
+import {
+  OktaAuth,
+  OktaAuthOptions,
+  AuthState,
+  IdxTransaction,
+  Token,
+  AuthApiError,
+  AuthenticatorKey,
+  IdxResponse,
+} from '@okta/okta-auth-js';
 
 const authConfig = {
   issuer: 'https://dev-23592845.okta.com/oauth2/default',
@@ -14,6 +23,8 @@ const authConfig = {
   },
 };
 
+const authClient = new OktaAuth(authConfig);
+
 export default class Auth extends LightningElement {
   username = '';
   password = '';
@@ -24,70 +35,67 @@ export default class Auth extends LightningElement {
   isAuthenticated = false;
   isLoading = true;
   isSigningOut = false;
-  authClient = null;
 
   constructor() {
     super();
-    this.loadOktaFromCDN();
-  }
-
-  loadOktaFromCDN = () => {
-    this.authClient = new OktaAuth(authConfig);
-
     // Subscribe to authState change event.
-    this.authClient.authStateManager.subscribe(this.handleAuthStateChange);
+    authClient.authStateManager.subscribe(this.handleAuthStateChange);
 
     this.startAuthListener();
-  };
+  }
 
-  startAuthListener = () => {
-    this.authClient
+  // connectedCallback(): void {
+  //     customElements.define('wes-icon', WESIcon);
+  //     customElements.define('wes-text-input', WESTextInput);
+  // }
+
+  startAuthListener = (): void => {
+    authClient
       .start()
       .then(() => {
-        console.log('uh');
         this.isLoading = false;
       })
-      .catch((e) => console.error(e));
+      .catch((e: unknown) => console.error(e));
   };
 
-  handleAuthStateChange = (authState) => {
+  handleAuthStateChange = (authState: AuthState): void => {
     this.isAuthenticated = !!authState.isAuthenticated;
   };
 
-  get isNotLoggedIn() {
+  get isNotLoggedIn(): boolean {
     return this.isAuthenticated || this.isLoading;
   }
 
-  usernameHandler = (e) => {
-    const { value } = e.target;
+  usernameHandler = (e: Event): void => {
+    const { value } = e.target as HTMLInputElement;
     this.username = value;
   };
 
-  passwordHandler = (e) => {
-    const { value } = e.target;
+  passwordHandler = (e: Event): void => {
+    const { value } = e.target as HTMLInputElement;
     this.password = value;
   };
 
-  submitDynamicSigninForm = () => {
+  submitDynamicSigninForm = (): Promise<void> => {
     this.isSigningOut = false;
     this.toggleIsLoading();
-    return this.authClient.idx
+    return authClient.idx
       .authenticate({
         username: this.username,
         password: '',
-        authenticators: ['okta_email'],
-        authenticator: 'okta_email',
+        authenticators: [AuthenticatorKey.OKTA_EMAIL],
+        authenticator: AuthenticatorKey.OKTA_EMAIL,
         methodType: 'email',
       })
       .then(this.handleTransaction)
-      .catch(async (e) => {
+      .catch(async (e: AuthApiError) => {
         // TODO: if user does not exist handle silently, redirect to register
         if (
           e.xhr &&
           JSON.parse(e.xhr.responseText).messages.value[0].message ===
             'The session has expired.'
         ) {
-          this.authClient.idx.clearTransactionMeta();
+          authClient.idx.clearTransactionMeta();
           return this.submitDynamicSigninForm();
         }
         this.toggleIsLoading();
@@ -95,15 +103,15 @@ export default class Auth extends LightningElement {
       });
   };
 
-  submitOTPCode = () => {
+  submitOTPCode = (): Promise<void> => {
     this.isLoading = true;
-    return this.authClient.idx
+    return authClient.idx
       .proceed({ verificationCode: this.password })
       .then(this.handleTransaction)
       .catch(this.showError);
   };
 
-  handleTransaction = async (transaction) => {
+  handleTransaction = async (transaction: IdxTransaction): Promise<void> => {
     if (transaction.messages) {
       const errorMessage = transaction.messages.reduce(
         (string, message) => `${string}. ${message.message}`,
@@ -117,37 +125,36 @@ export default class Auth extends LightningElement {
     switch (thisTransaction.status) {
       case 'PENDING':
         if (thisTransaction.nextStep?.name === 'select-authenticator-enroll') {
-          thisTransaction = await this.authClient.idx.proceed({
+          thisTransaction = await authClient.idx.proceed({
             authenticator: 'okta_email',
           });
         }
         if (
           thisTransaction.nextStep?.name === 'select-authenticator-authenticate'
         ) {
-          thisTransaction = await this.authClient.idx.proceed({
+          thisTransaction = await authClient.idx.proceed({
             authenticator: 'okta_email',
           });
         }
         if (
           thisTransaction.nextStep?.name === 'authenticator-verification-data'
         ) {
-          thisTransaction = await this.authClient.idx.proceed({
+          thisTransaction = await authClient.idx.proceed({
             methodType: 'email',
           });
         }
         if (thisTransaction.nextStep?.name === 'challenge-authenticator') {
           this.isEnteringOTPCode = true;
         }
-        break;
       case 'SUCCESS':
         if (thisTransaction.tokens) {
-          this.authClient.tokenManager.setTokens(thisTransaction.tokens);
+          authClient.tokenManager.setTokens(thisTransaction.tokens);
         }
         this.isEnteringOTPCode = false;
         break;
       case 'TERMINAL':
-      case 'FAILURE': {
-        const derp = thisTransaction.error;
+      case 'FAILURE':
+        const derp = thisTransaction.error as IdxResponse;
         const errorMessage =
           thisTransaction.error?.errorSummary ||
           derp.context?.messages?.value.reduce(
@@ -156,7 +163,6 @@ export default class Auth extends LightningElement {
           );
         this.showError(errorMessage);
         break;
-      }
       default:
         throw new Error(
           'TODO: add handling for ' + thisTransaction.status + ' status'
@@ -166,15 +172,15 @@ export default class Auth extends LightningElement {
     this.isLoading = false;
   };
 
-  logout = async () => {
+  logout = async (): Promise<void> => {
     this.isSigningOut = true;
     this.isLoading = true;
     try {
-      await this.authClient.revokeAccessToken();
-      await this.authClient.closeSession();
-      this.authClient.clearStorage();
-      this.authClient.idx.clearTransactionMeta();
-    } catch (e) {
+      await authClient.revokeAccessToken();
+      await authClient.closeSession();
+      authClient.clearStorage();
+      authClient.idx.clearTransactionMeta();
+    } catch (e: unknown) {
       console.error({ e });
       this.showError(e);
     }
@@ -182,7 +188,7 @@ export default class Auth extends LightningElement {
     this.resetState();
   };
 
-  resetState = () => {
+  resetState = (): void => {
     this.isLoading = false;
     this.isSigningOut = false;
     this.isAuthenticated = false;
@@ -191,31 +197,29 @@ export default class Auth extends LightningElement {
     this.password = '';
   };
 
-  renewToken = () => {
-    return this.authClient.tokenManager
-      .renew('accessToken')
-      .catch(this.showError);
+  renewToken = (): Promise<void | Token> => {
+    return authClient.tokenManager.renew('accessToken').catch(this.showError);
   };
 
-  getUserInfo = async () => {
+  getUserInfo = async (): Promise<void> => {
     try {
-      const value = await this.authClient.token.getUserInfo();
+      const value = await authClient.token.getUserInfo();
       this.userInfo = JSON.stringify(value);
     } catch (e) {
       this.showError(e);
     }
   };
 
-  showError = (errorMessage) => {
+  showError = (errorMessage: string): void => {
     this.errorMessage = errorMessage;
     this.isLoading = false;
   };
 
-  toggleIsLoading = () => {
+  toggleIsLoading = (): void => {
     this.isLoading = !this.isLoading;
   };
 
-  showSigninForm = () => {
+  showSigninForm = (): void => {
     this.isEnteringOTPCode = false;
   };
 }
