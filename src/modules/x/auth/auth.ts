@@ -1,4 +1,4 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import {
   OktaAuth,
   OktaAuthOptions,
@@ -10,7 +10,9 @@ import {
   IdxResponse,
 } from '@okta/okta-auth-js';
 
-const authConfig = {
+import WESTextInput from '@salesforce-ux/wes-text-input/text-input';
+
+const authConfig: OktaAuthOptions = {
   issuer: 'https://dev-23592845.okta.com/oauth2/default',
   clientId: '0oa79yd85chdQKJSQ5d7',
   redirectUri: 'http://localhost:6007/?path=/story/idx-userlogin--default',
@@ -26,7 +28,7 @@ const authConfig = {
 const authClient = new OktaAuth(authConfig);
 
 export default class Auth extends LightningElement {
-  username = '';
+  @api username = '';
   password = '';
   userInfo = '';
   errorMessage = '';
@@ -44,10 +46,9 @@ export default class Auth extends LightningElement {
     this.startAuthListener();
   }
 
-  // connectedCallback(): void {
-  //     customElements.define('wes-icon', WESIcon);
-  //     customElements.define('wes-text-input', WESTextInput);
-  // }
+  connectedCallback(): void {
+    customElements.define('wes-text-input', WESTextInput);
+  }
 
   startAuthListener = (): void => {
     authClient
