@@ -18,9 +18,6 @@ module.exports = (args) => {
     },
 
     plugins: [
-      nodeResolve({
-        browser: true,
-      }),
       babel({
         babelrc: false,
         babelHelpers: 'bundled',
@@ -34,19 +31,16 @@ module.exports = (args) => {
         ],
         extensions: ['.ts'],
       }),
+      nodeResolve({
+        browser: true,
+      }),
       lwc({
-        exclude: ['node_modules/**'],
+        exclude: ['node_modules/**/*.mjs'],
       }),
       commonJs(),
       replace({
         'process.env.NODE_ENV': JSON.stringify(__ENV__),
         preventAssignment: true,
-      }),
-      // After LWC has been transformed, transform any syntax isn't supported
-      // by all browsers that support modules
-      babel({
-        babelrc: false,
-        presets: ['@babel/preset-modules'],
       }),
       args.watch &&
         serve({

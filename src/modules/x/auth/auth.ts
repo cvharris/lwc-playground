@@ -44,11 +44,6 @@ export default class Auth extends LightningElement {
     this.startAuthListener();
   }
 
-  // connectedCallback(): void {
-  //     customElements.define('wes-icon', WESIcon);
-  //     customElements.define('wes-text-input', WESTextInput);
-  // }
-
   startAuthListener = (): void => {
     authClient
       .start()
