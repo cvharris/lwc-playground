@@ -1,6 +1,9 @@
 {
     "modules": [
         {
+            "npm": "@devforce/th-components"
+        },
+        {
             "dir": "src/modules"
         }
     ]

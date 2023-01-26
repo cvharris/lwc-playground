@@ -10,11 +10,13 @@ const __ENV__ = process.env.NODE_ENV ?? 'development';
 
 module.exports = (args) => {
   return {
-    input: 'src/main.js',
+    input: 'src/main.ts',
 
     output: {
-      file: 'dist/main.js',
-      format: 'esm',
+      dir: "dist",
+      chunkFileNames: "[name]-[hash].chunk.js",
+      format: "esm",
+      sourcemap: true,
     },
 
     plugins: [
@@ -26,8 +28,8 @@ module.exports = (args) => {
           // and there is no option to disable decorator transforms.
           // plugin-transform-typescript only transforms type information and leaves
           // the decorators in place for @lwc/babel-plugin-component to transform
+          ['@babel/plugin-syntax-decorators', { decoratorsBeforeExport: true }],
           ['@babel/plugin-transform-typescript'],
-          ['@lwc/babel-plugin-component'],
         ],
         extensions: ['.ts'],
       }),
@@ -35,7 +37,7 @@ module.exports = (args) => {
         browser: true,
       }),
       lwc({
-        exclude: ['node_modules/**/*.mjs'],
+        // exclude: ['node_modules/**/*.mjs'],
       }),
       commonJs(),
       replace({
