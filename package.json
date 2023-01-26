@@ -11,9 +11,6 @@
         "node": ">=14 <17",
         "yarn": "^3"
     },
-    "dependencies": {
-        "@devforce/th-components": "4.5.0"
-    },
     "devDependencies": {
         "@babel/core": "^7.0.0",
         "@babel/eslint-parser": "^7.19.1",
